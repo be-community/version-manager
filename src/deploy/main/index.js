@@ -22,6 +22,10 @@ const deployMain = () => {
   setTimeout(() => {
     gitCheckout.succeed();
   }, 1000);
+
+  gitMerge.start();
+  exec(`git merge ${from} ${branch}`);
+  gitMerge.succeed();
 };
 
 deployMain();
