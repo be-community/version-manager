@@ -17,14 +17,22 @@ const deployMain = () => {
 
   gitCheckout.start();
 
-  exec(`git checkout ${from}`);
+  exec(`git checkout ${branch}`, (err, stdout, stderr) => {
+    console.log(err);
+    console.log(stdout);
+    console.log(stderr);
+  });
 
   setTimeout(() => {
     gitCheckout.succeed();
   }, 1000);
 
   gitMerge.start();
-  exec(`git merge ${from} ${branch}`);
+  exec(`git merge ${from} ${branch}`, (err, stdout, stderr) => {
+    console.log(err);
+    console.log(stdout);
+    console.log(stderr);
+  });
   gitMerge.succeed();
 };
 
