@@ -4,10 +4,11 @@ import chalk from 'chalk';
 import { exec, execSync } from 'child_process';
 import load from '../../utils/load.js';
 import execReturn from '../../utils/execReturn.js';
+import GitException from '../../Exceptions/GitException.js';
 
 export default function () {
   const {
-    from = execSync('git branch --show-current').toString(), branch, push, remove,
+    from = execSync('git branch --show-current').toString(), branch, push, remove, remote,
   } = minimist(process.argv.slice(2));
 
   if (!branch) {
@@ -19,6 +20,7 @@ export default function () {
   const gitCheckout = load(`Checkouting to ${from}..`);
   const gitMerge = load(`Merging ${from} into ${branch}..`);
   const gitPush = load(`Pushing ${branch}`);
+  const gitRemove = load(`Removing ${branch} from remote`);
 
   console.log(chalk.rgb('150 200 0').bold('Starting deploy'));
 
@@ -46,6 +48,18 @@ export default function () {
 
   if (from === 'develop' || from === 'dev') {
     exec(`git checkout ${from}`);
+  } else if (remove) {
+    gitRemove.start();
+
+    if (!remote) {
+      console.log(chalk.hex('#FF2400').bold('Remote not specified. To specify a remote please use --remote'));
+      throw new GitException('Remote not specified.');
+    }
+    exec(`git branch -d ${from}`);
+    exec(`git push ${remote} -d ${from}`);
+    setTimeout(() => {
+      gitRemove.succeed();
+    }, 1000);
   }
 
   console.log(chalk.greenBright('Deployed Succesfully!'));
