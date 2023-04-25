@@ -38,6 +38,7 @@ const deploy = async () => {
 
   await new Promise(() => {
     setTimeout(() => {
+      console.log(from);
       exec(`git merge ${from}`, execReturn);
       gitMerge.succeed();
     }, 1000);
