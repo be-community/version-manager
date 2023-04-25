@@ -6,17 +6,18 @@ import load from '../../utils/load.js';
 import execReturn from '../../utils/execReturn.js';
 
 const deploy = () => {
-  const { from = execSync('git branch --show-current').toString(), branch, push } = minimist(process.argv.slice(2));
+  const {
+    from = execSync('git branch --show-current').toString(), branch, push, remove,
+  } = minimist(process.argv.slice(2));
 
   if (!branch) {
     console.log(chalk.hex('#FF2400').bold('You must specify a branch to be merged.'));
     console.log(chalk.hex('#FFFF00').bold('Example: deploy --branch master '));
     throw new Error('Branch not specified ');
   }
+
   const gitCheckout = load(`Checkouting to ${from}..`);
-
   const gitMerge = load(`Merging ${from} into ${branch}..`);
-
   const gitPush = load(`Pushing ${branch}`);
 
   console.log(chalk.rgb('150 200 0').bold('Starting deploy'));
@@ -43,7 +44,11 @@ const deploy = () => {
     }, 1000);
   }
 
+  if (from === 'develop' || from === 'dev') {
+    exec(`git checkout ${from}`);
+  }
+
   console.log(chalk.greenBright('Deployed Succesfully!'));
 };
 
-deploy();
+export default deploy;
