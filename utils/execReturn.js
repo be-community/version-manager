@@ -9,7 +9,6 @@ const execReturn = (err, stdout, stderr) => {
 
   if (stdout) {
     console.log(chalk.yellow(stdout));
-    throw new GitException('Warning on git');
   }
 
   if (stderr) {

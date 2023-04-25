@@ -27,35 +27,41 @@ const deploy = async () => {
 
   gitCheckout.start();
 
-  await new Promise(() => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       exec(`git checkout ${branch}`, execReturn);
       gitCheckout.succeed();
+      resolve();
     }, 1000);
-  });
+  }).then();
 
   gitMerge.start();
 
-  await new Promise(() => {
+  await new Promise((resolve) => {
     setTimeout(() => {
-      console.log(from);
       exec(`git merge ${from}`, execReturn);
       gitMerge.succeed();
+      resolve();
     }, 1000);
   });
 
   if (push) {
     gitPush.start();
-    await new Promise(() => {
+    await new Promise((resolve) => {
       setTimeout(() => {
-        exec(`git push ${branch}`, execReturn);
+        if (!remote) {
+          console.log(chalk.hex('#FF2400').bold('Remote not specified. To specify a remote please use --remote'));
+          throw new GitException('Remote not specified.');
+        }
+        exec(`git push ${remote} ${branch}`, execReturn);
         gitPush.succeed();
+        resolve();
       }, 1000);
     });
   }
   deployFinish.start();
 
-  await new Promise(() => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       if (from === 'develop' || from === 'dev') {
         exec(`git checkout ${from}`);
@@ -74,10 +80,9 @@ const deploy = async () => {
       }
       deployFinish.succeed();
       console.log(chalk.greenBright('Deployed Succesfully!'));
+      resolve();
     }, 2000);
   });
 };
-
-deploy();
 
 export default deploy;
