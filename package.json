@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "deploy": "./index.js"
+    "deploy": "./index.js",
+    "test-deploy": "./src/deploy/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

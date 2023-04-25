@@ -6,7 +6,7 @@ import load from '../../utils/load.js';
 import execReturn from '../../utils/execReturn.js';
 import GitException from '../../Exceptions/GitException.js';
 
-export default function () {
+const deploy = () => {
   const {
     from = execSync('git branch --show-current').toString(), branch, push, remove, remote,
   } = minimist(process.argv.slice(2));
@@ -17,12 +17,13 @@ export default function () {
     throw new Error('Branch not specified ');
   }
 
-  const gitCheckout = load(`Checkouting to ${from}..`);
+  const gitCheckout = load(`Checkouting to ${branch}..`);
   const gitMerge = load(`Merging ${from} into ${branch}..`);
   const gitPush = load(`Pushing ${branch}`);
   const gitRemove = load(`Removing ${branch} from remote`);
+  const deployFinish = load('Finishing deploy..');
 
-  console.log(chalk.rgb('150 200 0').bold('Starting deploy'));
+  console.log(chalk.hex('150 200 0').bold('Starting deploy'));
 
   gitCheckout.start();
 
@@ -45,6 +46,7 @@ export default function () {
       gitPush.succeed();
     }, 1000);
   }
+  deployFinish.start();
 
   if (from === 'develop' || from === 'dev') {
     exec(`git checkout ${from}`);
@@ -61,6 +63,12 @@ export default function () {
       gitRemove.succeed();
     }, 1000);
   }
+  setTimeout(() => {
+    deployFinish.succeed();
+    console.log(chalk.greenBright('Deployed Succesfully!'));
+  }, 2000);
+};
 
-  console.log(chalk.greenBright('Deployed Succesfully!'));
-}
+deploy();
+
+export default deploy;
