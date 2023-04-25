@@ -6,7 +6,7 @@ import load from '../../utils/load.js';
 import execReturn from '../../utils/execReturn.js';
 import GitException from '../../Exceptions/GitException.js';
 
-const deploy = () => {
+const deploy = async () => {
   const {
     from = execSync('git branch --show-current').toString(), branch, push, remove, remote,
   } = minimist(process.argv.slice(2));
@@ -27,46 +27,54 @@ const deploy = () => {
 
   gitCheckout.start();
 
-  exec(`git checkout ${branch}`, execReturn);
-
-  setTimeout(() => {
-    gitCheckout.succeed();
-  }, 1000);
+  await new Promise(() => {
+    setTimeout(() => {
+      exec(`git checkout ${branch}`, execReturn);
+      gitCheckout.succeed();
+    }, 1000);
+  });
 
   gitMerge.start();
-  exec(`git merge ${from} ${branch}`, execReturn);
-  setTimeout(() => {
-    gitMerge.succeed();
-  }, 1000);
+
+  await new Promise(() => {
+    setTimeout(() => {
+      exec(`git merge ${from} ${branch}`, execReturn);
+      gitMerge.succeed();
+    }, 1000);
+  });
 
   if (push) {
     gitPush.start();
-    exec(`git push ${branch}`, execReturn);
-    setTimeout(() => {
-      gitPush.succeed();
-    }, 1000);
+    await new Promise(() => {
+      setTimeout(() => {
+        exec(`git push ${branch}`, execReturn);
+        gitPush.succeed();
+      }, 1000);
+    });
   }
   deployFinish.start();
 
-  if (from === 'develop' || from === 'dev') {
-    exec(`git checkout ${from}`);
-  } else if (remove) {
-    gitRemove.start();
-
-    if (!remote) {
-      console.log(chalk.hex('#FF2400').bold('Remote not specified. To specify a remote please use --remote'));
-      throw new GitException('Remote not specified.');
-    }
-    exec(`git branch -d ${from}`);
-    exec(`git push ${remote} -d ${from}`);
+  await new Promise(() => {
     setTimeout(() => {
-      gitRemove.succeed();
-    }, 1000);
-  }
-  setTimeout(() => {
-    deployFinish.succeed();
-    console.log(chalk.greenBright('Deployed Succesfully!'));
-  }, 2000);
+      if (from === 'develop' || from === 'dev') {
+        exec(`git checkout ${from}`);
+      } else if (remove) {
+        gitRemove.start();
+
+        if (!remote) {
+          console.log(chalk.hex('#FF2400').bold('Remote not specified. To specify a remote please use --remote'));
+          throw new GitException('Remote not specified.');
+        }
+        exec(`git branch -d ${from}`);
+        exec(`git push ${remote} -d ${from}`);
+        setTimeout(() => {
+          gitRemove.succeed();
+        }, 1000);
+      }
+      deployFinish.succeed();
+      console.log(chalk.greenBright('Deployed Succesfully!'));
+    }, 2000);
+  });
 };
 
 deploy();
