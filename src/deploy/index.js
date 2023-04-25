@@ -5,7 +5,7 @@ import { exec, execSync } from 'child_process';
 import load from '../../utils/load.js';
 import execReturn from '../../utils/execReturn.js';
 
-const deploy = () => {
+export default function () {
   const {
     from = execSync('git branch --show-current').toString(), branch, push, remove,
   } = minimist(process.argv.slice(2));
@@ -49,6 +49,4 @@ const deploy = () => {
   }
 
   console.log(chalk.greenBright('Deployed Succesfully!'));
-};
-
-export default deploy;
+}
