@@ -5,8 +5,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "deploy": "./index.js",
-    "test-deploy": "./lib/deploy/index.js"
+    "v-manager": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

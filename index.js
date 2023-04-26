@@ -1,14 +1,11 @@
 #!/usr/bin/env node
-import chalk from 'chalk';
-import publish from './lib/publish/index.js';
+import { Prompt } from "@poppinss/prompts";
+import Questions from "./lib/questions/index.js";
+import Proccess from "./lib/proccess/index.js";
 
-const functions = {
-  publish,
-};
 
-if (!functions[process.argv.slice(2)[0]]) {
-  console.log(chalk.red('Command not found'));
-  throw new Error();
-}
+const questions = new Questions(new Prompt());
 
-functions[process.argv.slice(2)[0]]();
+await questions.publish();
+await new Proccess(questions).commands();
+
