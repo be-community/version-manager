@@ -1,6 +1,6 @@
 {
   "name": "@be-tech/version-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Git version manager",
   "type": "module",
   "main": "index.js",
