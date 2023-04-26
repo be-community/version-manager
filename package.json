@@ -1,5 +1,5 @@
 {
-  "name": "publish_lib",
+  "name": "@be-tech/version-manager",
   "version": "1.0.0",
   "type": "module",
   "description": "",
